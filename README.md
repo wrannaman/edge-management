@@ -1,4 +1,4 @@
-# Edge
+# Edge Management
 
 - manages kube cluster on the edge
 
