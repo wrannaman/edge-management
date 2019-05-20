@@ -7,14 +7,15 @@ import (
 	"github.com/wrannaman/edge-management/api/mqttserver"
 )
 
-type Query struct {
+// SendEndpointQuery ...
+type SendEndpointQuery struct {
 	Topic   string `form:"topic"`
 	Message string `form:"message"`
 }
 
-// SendEndpoint
+// SendEndpoint me
 func SendEndpoint(c *gin.Context) {
-	var params Query
+	var params SendEndpointQuery
 	if c.ShouldBindQuery(&params) == nil {
 		log.Println("topic", params.Topic, "message", params.Message)
 		mqttserver.Publish(params.Topic, params.Message)

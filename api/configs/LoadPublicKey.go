@@ -1,0 +1,30 @@
+package configs
+
+import (
+	"crypto/x509"
+	"encoding/pem"
+	"fmt"
+)
+
+// LoadPublicKey ...
+func LoadPublicKey(data []byte) (interface{}, error) {
+	input := data
+
+	block, _ := pem.Decode(data)
+	if block != nil {
+		input = block.Bytes
+	}
+
+	// Try to load SubjectPublicKeyInfo
+	pub, err0 := x509.ParsePKIXPublicKey(input)
+	if err0 == nil {
+		return pub, nil
+	}
+
+	cert, err1 := x509.ParseCertificate(input)
+	if err1 == nil {
+		return cert.PublicKey, nil
+	}
+
+	return nil, fmt.Errorf("square/go-jose: parse error, got '%s' and '%s'", err0, err1)
+}

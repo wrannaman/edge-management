@@ -1,1 +1,8 @@
 .DS_Store
+
+api/configs/dev.json
+api/certs/cert.pem
+
+app/config.dev.json
+app/config.json
+app/config.prod.json

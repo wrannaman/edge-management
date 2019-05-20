@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/wrannaman/edge-management/api/configs"
 	"github.com/wrannaman/edge-management/api/httpserver"
 	"github.com/wrannaman/edge-management/api/mqttserver"
 )
@@ -27,6 +28,7 @@ import (
 // }
 
 func main() {
+	configs.Initialize()
 	go httpserver.StartServer()
 	mqttserver.Start()
 }
