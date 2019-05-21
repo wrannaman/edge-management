@@ -1,6 +1,7 @@
 package redis
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -10,43 +11,45 @@ import (
 )
 
 // RedisClient ...
-var RedisClient redis.Client
+var RedisClient *redis.Client
 
 // Initialize ...
 func Initialize() {
-	RedisClient := redis.NewClient(&redis.Options{
+	RedisClient = redis.NewClient(&redis.Options{
 		Addr:     configs.Configs.RedisConfig.Host + ":" + strconv.Itoa(configs.Configs.RedisConfig.Port),
 		Password: configs.Configs.RedisConfig.Password,
 		DB:       0,
 	})
-
 	_, err := RedisClient.Ping().Result()
 	if err != nil {
 		panic(err)
 	}
 	log.Println("Redis    OKAY")
+	fmt.Printf("RedisClient %v\n", RedisClient)
+
 }
 
 // Get ...
-func Get(key string) string {
-	val, err := RedisClient.Get(key).Result()
+func Get(key string) (string, error) {
+	val, err := RedisClient.Get("@sugar-edge-" + key).Result()
 	if err != nil && err != redis.Nil {
 		panic(err)
 	}
-	return val
+	return val, err
 }
 
 // Set ...
 func Set(key string, value string) {
-	err := RedisClient.Set(key, value, 0).Err()
+	fmt.Printf("SET RedisClient %v\n", RedisClient)
+	err := RedisClient.Set("@sugar-edge-"+key, value, 0).Err()
 	if err != nil {
 		panic(err)
 	}
 }
 
-// SetTLS ...
-func SetTLS(key string, value string, expires int) {
-	_, err := RedisClient.SetNX(key, value, time.Duration(expires)*time.Second).Result()
+// SetTTL ...
+func SetTTL(key string, value string, expires int) {
+	_, err := RedisClient.SetNX("@sugar-edge-"+key, value, time.Duration(expires)*time.Second).Result()
 	if err != nil {
 		panic(err)
 	}

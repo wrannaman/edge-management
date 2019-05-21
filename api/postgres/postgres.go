@@ -25,9 +25,15 @@ var Connection *pg.DB
 // 	return fmt.Sprintf("Story<%d %s %s>", s.Id, s.Title, s.Author)
 // }
 
+// // GetConnection ...
+// func GetConnection() *pg.DB {
+// 	fmt.Printf("Connection %v\n", Connection)
+// 	return Connection
+// }
+
 // Initialize ...
 func Initialize() {
-	Connection := pg.Connect(&pg.Options{
+	Connection = pg.Connect(&pg.Options{
 		User:     configs.Configs.PostgresConfig.Username,
 		Password: configs.Configs.PostgresConfig.Password,
 		Addr:     configs.Configs.PostgresConfig.Host + ":" + strconv.Itoa(configs.Configs.PostgresConfig.Port),
@@ -99,7 +105,7 @@ func createSchema(db *pg.DB) error {
 		//(*Story)(nil)
 	} {
 		err := db.CreateTable(model, &orm.CreateTableOptions{
-			// Temp: true,
+			Temp:        false,
 			IfNotExists: true,
 		})
 		if err != nil {

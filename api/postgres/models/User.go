@@ -6,7 +6,7 @@ import "fmt"
 type User struct {
 	ID    int64  `sql:",pk"`
 	Name  string ``
-	Email string `sql:"notnull,unique"`
+	Email string `sql:",notnull,unique"`
 }
 
 func (u User) String() string {
