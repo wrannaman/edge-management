@@ -1,4 +1,4 @@
-package httpserver
+package user
 
 import (
 	"fmt"
@@ -7,10 +7,12 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/wrannaman/edge-management/api/configs"
+	"github.com/wrannaman/edge-management/api/postgres"
+	"github.com/wrannaman/edge-management/api/postgres/models"
 )
 
-// User demo
-type User struct {
+// AuthTokenUser demo
+type AuthTokenUser struct {
 	Email         string
 	EmailVerified string
 	Expires       string
@@ -38,19 +40,22 @@ func AttachUser() gin.HandlerFunc {
 				panic(err)
 			}
 
-			var user User
+			// var authUser AuthTokenUser
 			claims := token.Claims.(jwt.MapClaims)
 
-			user.Email = fmt.Sprintf("%v", claims["email"])
-			user.EmailVerified = fmt.Sprintf("%v", claims["email_verified"])
-			user.Expires = fmt.Sprintf("%v", claims["exp"])
-			fmt.Printf("user %v\n", user)
+			// Select user by Email
+			email := fmt.Sprintf("%v", claims["email"])
+			userSelect := &models.User{Email: email}
+			_ = postgres.Select(userSelect)
 
-			// Set the user
-			c.Set("user", user)
+			if userSelect.ID == 0 {
+				_ = postgres.Insert(userSelect)
+			}
+
+			// Set the authUser
+			c.Set("user", userSelect)
 
 			// before request
-
 			c.Next()
 
 			// // after request

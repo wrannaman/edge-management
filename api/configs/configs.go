@@ -35,25 +35,10 @@ func Initialize() {
 		log.Fatalf("unable to decode into struct, %v", err)
 	}
 	pem, err := ioutil.ReadFile(Configs.CertPath)
-	// if err != nil {
-	//   panic(err)
-	// }
-	//
-	// secret, err := LoadPublicKey(pem)
-	// if err != nil {
-	//   panic(err)
-	// }
-	// secretProvider := auth0.NewKeyProvider(secret)
-	// audience := Configs.Auth0WellKnown
-	// authConfig := auth0.NewConfiguration(secretProvider, []string{audience}, Configs.Auth0Domain, jose.RS256)
-	// validator := auth0.NewValidator(authConfig, nil)
+	if err != nil {
+		panic(err)
+	}
 
-	// client := auth0.NewJWKClient(auth0.JWKClientOptions{URI: Configs.Auth0WellKnown}, nil)
-	// audience := Configs.Auth0ClientID
-	// configuration := auth0.NewConfiguration(client, []string{audience}, Configs.Auth0Domain, jose.RS256)
-	// validator := auth0.NewValidator(configuration, nil)
-	//
-	// Configs.Auth0Validator = validator
 	fmt.Printf("%# v \n", pretty.Formatter(Configs)) //It will print all struct details
 	Configs.Pem = pem
 

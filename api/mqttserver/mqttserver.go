@@ -2,13 +2,17 @@ package mqttserver
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 )
 
+// Client ...
 var Client MQTT.Client
+
+// flag to set up mqtt client or not
 var hasBeenSet bool
 
 var f MQTT.MessageHandler = func(client MQTT.Client, msg MQTT.Message) {
@@ -16,8 +20,8 @@ var f MQTT.MessageHandler = func(client MQTT.Client, msg MQTT.Message) {
 	fmt.Printf("MSG: %s\n", msg.Payload())
 }
 
-// MaybeInitialize me
-func MaybeInitialize() bool {
+// Initialize me
+func Initialize() bool {
 	if hasBeenSet == true {
 		return true
 	}
@@ -37,19 +41,19 @@ func MaybeInitialize() bool {
 	}
 	hasBeenSet = true
 
-	fmt.Println("MQTT good to go")
+	log.Println("MQTT     OKAY")
+	go Start()
 	return true
 }
 
 // Start me
 func Start() {
-	MaybeInitialize()
 	if token := Client.Subscribe("$sugar/init", 0, InitHandler); token.Wait() && token.Error() != nil {
 		fmt.Println(token.Error())
 		os.Exit(1)
 	}
 
-	fmt.Println("subscribed")
+	fmt.Println("MQTT => subscribed")
 	for {
 		<-InitChannel
 	}

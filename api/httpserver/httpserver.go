@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/wrannaman/edge-management/api/httpserver/user"
 )
 
 // Access Control Helper function.
@@ -33,11 +34,11 @@ func StartServer() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	r.Use(AttachUser())
+	r.Use(user.AttachUser())
 
 	// Unauthorized
 	r.GET("/ping", PingEndpoint)
-	r.GET("/v1/user", GetUser)
+	r.GET("/v1/user", user.GetUser)
 
 	// Authorized
 	// authorized := r.Group("/")
