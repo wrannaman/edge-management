@@ -3,15 +3,17 @@ package user
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"strings"
+	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis"
 	"github.com/wrannaman/edge-management/api/configs"
+	"github.com/wrannaman/edge-management/api/edgeutils"
 	"github.com/wrannaman/edge-management/api/postgres"
 	"github.com/wrannaman/edge-management/api/postgres/models"
-	"github.com/wrannaman/edge-management/api/redis"
+	"github.com/wrannaman/edge-management/api/redisclient"
 )
 
 // AuthTokenUser demo
@@ -31,6 +33,9 @@ func AttachUser() gin.HandlerFunc {
 			c.Next()
 		} else {
 			auth = strings.TrimSpace(strings.Replace(authArray[0], "Bearer ", "", -1))
+			jwt.TimeFunc = func() time.Time {
+				return time.Now().Add(time.Duration(60) * time.Second)
+			}
 			token, err := jwt.Parse(auth, func(token *jwt.Token) (interface{}, error) {
 				// Don't forget to validate the alg is what you expect:
 				if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
@@ -39,47 +44,45 @@ func AttachUser() gin.HandlerFunc {
 				// Unpack key from PEM encoded PKCS8
 				return jwt.ParseRSAPublicKeyFromPEM(configs.Configs.Pem)
 			})
-			if err != nil {
-				fmt.Println("Token is not valid:", token)
-				panic(err)
-			}
+			edgeutils.CheckError(err)
 
 			// var authUser AuthTokenUser
 			claims := token.Claims.(jwt.MapClaims)
 
 			// Select user by Email
-			var users []models.User
 			email := fmt.Sprintf("%v", claims["email"])
+
+			// Redis key
+			key := "user-" + email
 			userSelect := &models.User{Email: email}
 
-			_ = postgres.Connection.Model(&users).Select(userSelect)
+			redisRawValue, err := redisclient.Get(key)
 
+			if err != nil && err != redis.Nil {
+				edgeutils.CheckError(err)
+			} else if len(redisRawValue) > 0 {
+				b := []byte(redisRawValue)
+				err = json.Unmarshal(b, userSelect)
+				edgeutils.CheckError(err)
+			}
+
+			// if we already have a user, set the
 			if userSelect.ID == 0 {
-				_ = postgres.Insert(userSelect)
-				email := fmt.Sprintf("%v", claims["email"])
-				userSelect := &models.User{Email: email}
-				_ = postgres.Select(userSelect)
+				_ = postgres.Connection.Select(models.User{Email: userSelect.Email})
+
+				if userSelect.ID == 0 {
+					_ = postgres.Insert(userSelect)
+				}
+
+				// set user in redis
+				b, _ := json.Marshal(&userSelect)
+				redisclient.Set(key, string(b))
 			}
 
-			// Set the authUser
 			c.Set("userID", userSelect.ID)
-			// set user in redis
-			stringUserID := strconv.FormatInt(userSelect.ID, 10)
-			key := "user-" + stringUserID
-			b, _ := json.Marshal(&userSelect)
-			redis.Set(key, string(b))
+			c.Set("userEmail", userSelect.Email)
 
-			val, err := redis.Get(key)
-			if err != nil {
-				panic(err)
-			}
-			getUser := &models.User{}
-			b = []byte(val)
-			err = json.Unmarshal(b, getUser)
-			if err != nil {
-				return
-			}
-			fmt.Printf("redis get %v\n", getUser)
+			fmt.Printf("FINAL USER %v\n", userSelect)
 
 			// before request
 			c.Next()

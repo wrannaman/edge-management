@@ -1,7 +1,6 @@
-package redis
+package redisclient
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"time"
@@ -25,8 +24,6 @@ func Initialize() {
 		panic(err)
 	}
 	log.Println("Redis    OKAY")
-	fmt.Printf("RedisClient %v\n", RedisClient)
-
 }
 
 // Get ...
@@ -40,7 +37,6 @@ func Get(key string) (string, error) {
 
 // Set ...
 func Set(key string, value string) {
-	fmt.Printf("SET RedisClient %v\n", RedisClient)
 	err := RedisClient.Set("@sugar-edge-"+key, value, 0).Err()
 	if err != nil {
 		panic(err)
