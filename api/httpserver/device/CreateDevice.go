@@ -1,12 +1,13 @@
-package user
+package device
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/wrannaman/edge-management/api/edgeutils"
 	"github.com/wrannaman/edge-management/api/postgres"
 	"github.com/wrannaman/edge-management/api/postgres/models"
 )
 
-// GetUser godoc
+// CreateDevice godoc
 // @Summary Get currently logged in user
 // @Description auth token parsed to get user
 // @Accept  json
@@ -16,17 +17,14 @@ import (
 // @Failure 400 {object} httputil.HTTPError
 // @Failure 404 {object} httputil.HTTPError
 // @Failure 500 {object} httputil.HTTPError
-// @Router /user [get]
-func GetUser(c *gin.Context) {
-	userID := c.GetInt64("userID")
-
-	var users []models.User
-	userSelect := &models.User{ID: userID}
-
-	_ = postgres.Connection.Model(&users).Select(userSelect)
-
+// @Router /device [post]
+func CreateDevice(c *gin.Context) {
+	var device models.Device
+	err := c.BindJSON(&device)
+	edgeutils.CheckError(err)
+	err = postgres.Connection.Insert(&device)
+	edgeutils.CheckError(err)
 	c.JSON(200, gin.H{
-		"user": userSelect,
+		"device": device,
 	})
-
 }

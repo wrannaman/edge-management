@@ -102,6 +102,7 @@ func Initialize() {
 func createSchema(db *pg.DB) error {
 	for _, model := range []interface{}{
 		(*models.User)(nil),
+		(*models.Device)(nil),
 		//(*Story)(nil)
 	} {
 		err := db.CreateTable(model, &orm.CreateTableOptions{

@@ -48,7 +48,7 @@ import Collapse from '@material-ui/core/Collapse';
 
 // apis
 import { fetchTeams } from '../../src/apiCalls/team';
-import { fetchProjects } from '../../src/apiCalls/project';
+import { fetchDevices } from '../../src/apiCalls/device';
 
 
 // ours
@@ -244,12 +244,12 @@ class MiniDrawer extends React.Component {
       this.setState({ auth: true });
     }
 
-    await checkTokenAndSetUser({ access_token, id_token })
-    const projectRes = await fetchProjects();
+    await checkTokenAndSetUser({ access_token, id_token });
+    const deviceRes = await fetchDevices();
 
     // const teamRes = await fetchTeams()
     // console.log('TEAMS', teamRes)
-    if (projectRes.projects) update('projects', projectRes.projects);
+    if (deviceRes.devicees) update('projects', deviceRes.devicees);
 
     // const user = getState('user');
     // this.setState({ user, open: user.walkthroughs.explore ? false : true });
@@ -365,6 +365,10 @@ class MiniDrawer extends React.Component {
     Router.push({ pathname: '/dashboard' });
   }
 
+  createDevice = () => {
+    console.log('create device');
+  }
+
   render() {
     const { goToDashboard, createProject, prepareSearch, handleInputChange, activated, goToProject, activatedProject } = this;
     const { classes, theme, title, showSearch, bindInputChange } = this.props;
@@ -391,7 +395,7 @@ class MiniDrawer extends React.Component {
               className={classes.nested}
             >
               <ListItemText
-                primary="Projects"
+                primary="Apps"
               />
               <ListItemSecondaryAction>
                 <Button
@@ -405,46 +409,42 @@ class MiniDrawer extends React.Component {
               </ListItemSecondaryAction>
             </ListItem>
             <Divider />
-            {projects.length > 0 && (
-              projects.map((project) => {
-                return (
-                    <List
-                      component="div"
-                      disablePadding
-                      key={`nav-${project.id}`}
-                    >
-                      <ListItem
-                        key={project.name}
-                        button
-                        className={classes.nested}
-                        onClick={this.toggleProjectsExpanded(project.id)}
-                      >
-                        <ListItemText
-                          primary={project.name}
-                          classes={{
-                            primary: (activatedProject(project.id, 'project') || activatedProject(project.id, 'media')) ? classes.active : classes.inactive
-                          }}
-
-                        />
-                        {projectsExpanded[project.id] ? <ExpandLess /> : <ExpandMore />}
-                      </ListItem>
-                      <Collapse in={projectsExpanded[project.id] ? true : false} timeout="auto" key={project.id}>
-                        <ListItem
-                          button
-                          className={classes.nested}
-                          onClick={goToProject(project, 'media')}
-                        >
-                          <ListItemText
-                            inset
-                            primary="Media"
-                            primaryTypographyProps={{ style: activatedProject(project.id, 'media') ? { color: primary } : {} }}
-                          />
-                        </ListItem>
-                      </Collapse>
-                    </List>
-                );
-              })
-            )}
+            <ListItem
+              className={classes.nested}
+            >
+              <ListItemText
+                primary="Devices"
+              />
+              <ListItemSecondaryAction>
+                <Button
+                  onClick={this.createDevice}
+                  color="primary"
+                  type="submit"
+                  variant="contained"
+                >
+                  New
+                </Button>
+              </ListItemSecondaryAction>
+            </ListItem>
+            <Divider />
+            <ListItem
+              className={classes.nested}
+            >
+              <ListItemText
+                primary="Devices"
+              />
+              <ListItemSecondaryAction>
+                <Button
+                  onClick={this.createDevice}
+                  color="primary"
+                  type="submit"
+                  variant="contained"
+                >
+                  New
+                </Button>
+              </ListItemSecondaryAction>
+            </ListItem>
+            <Divider />
           </List>
       </div>
     );

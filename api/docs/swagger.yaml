@@ -1,0 +1,15 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: xx@xx.io
+    name: API Support
+    url: http://www.xx.io/support
+  description: This will cotroll remote edge devices
+  license:
+    name: MIT
+  termsOfService: https://sugarkubes.io/terms/
+  title: Edge Management API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

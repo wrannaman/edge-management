@@ -1,0 +1,20 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This will cotroll remote edge devices",
+        "title": "Edge Management API",
+        "termsOfService": "https://sugarkubes.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.xx.io/support",
+            "email": "xx@xx.io"
+        },
+        "license": {
+            "name": "MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {}
+}

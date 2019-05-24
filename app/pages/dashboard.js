@@ -25,7 +25,7 @@ import Intro from '../components/Walkthrough/Intro';
 import Auth from '../src/Auth';
 import { flex_row } from '../utils/styles';
 import { primary } from '../utils/colors';
-import { fetchProjects } from '../src/apiCalls/project';
+import { fetchDevices } from '../src/apiCalls/device';
 
 // other
 import Joyride from 'react-joyride';
@@ -181,7 +181,7 @@ class Index extends React.Component {
     // if (query && query.page) page = Number(query.page);
     // if (query && query.limit) limit = Number(query.limit);
     //
-    // const res = await fetchProjects({ limit, page, search });
+    // const res = await fetchDevices({ limit, page, search });
     // if (res.error) {
     //   this.setState({ snackbarMessage: res.error });
     //   return setTimeout(() => this.setState({ snackbarMessage: '' }), 3000);
@@ -217,7 +217,7 @@ class Index extends React.Component {
     // const { query } = this.props.router;
     // const search = query && query.search ? query.search : '';
     // const { limit } = this.state;
-    // const res = await fetchProjects({ limit, page, search });
+    // const res = await fetchDevices({ limit, page, search });
     // if (res.error) {
     //   this.setState({ snackbarMessage: res.error });
     //   return setTimeout(() => this.setState({ snackbarMessage: '' }), 3000);
@@ -235,7 +235,7 @@ class Index extends React.Component {
     // const { query } = this.props.router;
     // const search = query && query.search ? query.search : '';
     // this.setState({ limit, page: 0 });
-    // const res = await fetchProjects({ limit, page: 0, search });
+    // const res = await fetchDevices({ limit, page: 0, search });
     // if (res.error) {
     //   this.setState({ snackbarMessage: res.error });
     //   return setTimeout(() => this.setState({ snackbarMessage: '' }), 3000);
@@ -252,7 +252,7 @@ class Index extends React.Component {
     if (e && e.preventDefault) e.preventDefault();
     const { project: { update } } = this.props.store;
     const { query } = this.props.router;
-    const projectRes = await fetchProjects({ ...query, search: text });
+    const projectRes = await fetchDevices({ ...query, search: text });
     if (projectRes && projectRes.projects) {
       update('projects', projectRes.projects);
       if (projectRes.projects.length === 0) {
@@ -266,7 +266,7 @@ class Index extends React.Component {
     // const search = text;
     // let waiting = true;
     // this.setState({ limit, page, search, waiting });
-    // const res = await fetchProjects({ limit, page, search });
+    // const res = await fetchDevices({ limit, page, search });
     // if (res.error) {
     //   this.setState({ snackbarMessage: res.error });
     //   return setTimeout(() => this.setState({ snackbarMessage: '' }), 3000);

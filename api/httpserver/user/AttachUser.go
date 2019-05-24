@@ -23,10 +23,11 @@ type AuthTokenUser struct {
 	Expires       string
 }
 
-// AttachUser middleware to get user
+// AttachUser godoc
 func AttachUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authArray := c.Request.Header["Authorization"]
+		r := c.Copy().Request
+		authArray := r.Header["Authorization"]
 		auth := ""
 
 		if len(authArray) == 0 {
@@ -71,6 +72,7 @@ func AttachUser() gin.HandlerFunc {
 				_ = postgres.Connection.Select(models.User{Email: userSelect.Email})
 
 				if userSelect.ID == 0 {
+					userSelect.Role = "admin"
 					_ = postgres.Insert(userSelect)
 				}
 
@@ -81,8 +83,6 @@ func AttachUser() gin.HandlerFunc {
 
 			c.Set("userID", userSelect.ID)
 			c.Set("userEmail", userSelect.Email)
-
-			fmt.Printf("FINAL USER %v\n", userSelect)
 
 			// before request
 			c.Next()
