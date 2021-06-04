@@ -30,7 +30,7 @@
     "@zeit/next-css": "^1.0.1",
     "amplitude-js": "^5.2.2",
     "auth0-js": "^9.10.1",
-    "auth0-lock": "^11.14.1",
+    "auth0-lock": "^11.30.1",
     "autobind-decorator": "^2.4.0",
     "date-fns": "2.0.0-alpha.21",
     "downshift": "^3.2.7",
